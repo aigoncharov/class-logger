@@ -5,6 +5,7 @@ node_modules
 /tsconfig*
 /tslint*
 /index.ts
+/global.d.ts
 .prettierignore
 .vscode
 *.tgz
