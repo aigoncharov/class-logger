@@ -31,7 +31,7 @@ export let configDefault: IClassLoggerConfig = {
   formatter: new ClassLoggerFormatterDefault(),
   include: {
     args: true,
-    constructor: true,
+    construct: true,
     result: true,
   },
   log: console.log, // tslint:disable-line no-console

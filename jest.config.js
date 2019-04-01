@@ -5,6 +5,7 @@ module.exports = {
   },
   testRegex: '^.+\\.(test|spec)\\.tsx?$',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  restoreMocks: true,
   collectCoverage: true,
   coveragePathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/node_modules/'],
   coverageThreshold: {

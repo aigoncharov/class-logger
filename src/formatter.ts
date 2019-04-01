@@ -3,8 +3,8 @@ import stringify from 'fast-safe-stringify'
 export interface IClassLoggerLogData {
   args: any[]
   className: string
-  methodName: string
-  classInstance: any
+  propertyName: string | symbol
+  classInstance?: any
 }
 export interface IClassLoggerLogResData {
   result: any
@@ -23,14 +23,14 @@ export interface IClassLoggerMessageConfigArgsComplex {
 }
 export interface IClassLoggerIncludeConfig {
   args: boolean | IClassLoggerMessageConfigArgsComplex
-  constructor: boolean
+  construct: boolean
   result: boolean
 }
 
 export class ClassLoggerFormatterDefault implements IClassLoggerFormatter {
   public start(data: IClassLoggerFormatterStartData) {
     let message = this.base(data)
-    if (data.include.args) {
+    if (this.includeArgs(data.include.args, 'start')) {
       message += this.args(data)
     }
     message += this.final()
@@ -39,7 +39,7 @@ export class ClassLoggerFormatterDefault implements IClassLoggerFormatter {
   public end(data: IClassLoggerFormatterEndData) {
     let message = this.base(data)
     message += this.operation(data)
-    if (data.include.args) {
+    if (this.includeArgs(data.include.args, 'end')) {
       message += this.args(data)
     }
     if (data.include.result) {
@@ -49,8 +49,8 @@ export class ClassLoggerFormatterDefault implements IClassLoggerFormatter {
     return message
   }
 
-  protected base({ className, methodName }: IClassLoggerFormatterStartData) {
-    return `${className}.${methodName}`
+  protected base({ className, propertyName }: IClassLoggerFormatterStartData) {
+    return `${className}.${propertyName.toString()}`
   }
   protected operation({ error }: IClassLoggerFormatterEndData) {
     return error ? ' -> error' : ' -> done'
@@ -70,5 +70,15 @@ export class ClassLoggerFormatterDefault implements IClassLoggerFormatter {
   }
   protected resultToString(res: any) {
     return typeof res === 'object' ? stringify(res) : res
+  }
+
+  private includeArgs(
+    includeArgs: boolean | IClassLoggerMessageConfigArgsComplex,
+    type: keyof IClassLoggerMessageConfigArgsComplex,
+  ) {
+    if (typeof includeArgs === 'boolean') {
+      return includeArgs
+    }
+    return includeArgs[type]
   }
 }
