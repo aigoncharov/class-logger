@@ -27,7 +27,7 @@ export interface IClassLoggerIncludeConfig {
   result: boolean
 }
 
-export class ClassLoggerFormatterDefault implements IClassLoggerFormatter {
+export class ClassLoggerFormatterService implements IClassLoggerFormatter {
   public start(data: IClassLoggerFormatterStartData) {
     let message = this.base(data)
     if (this.includeArgs(data.include.args, 'start')) {
@@ -66,10 +66,10 @@ export class ClassLoggerFormatterDefault implements IClassLoggerFormatter {
   }
 
   protected argsToString(args: any[]) {
-    return args.map((arg) => stringify(arg)).join(', ')
+    return args.map((arg) => (typeof arg === 'object' ? stringify(arg) : arg.toString())).join(', ')
   }
   protected resultToString(res: any) {
-    return typeof res === 'object' ? stringify(res) : res
+    return typeof res === 'object' ? stringify(res) : res.toString()
   }
 
   private includeArgs(

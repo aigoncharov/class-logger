@@ -1,6 +1,6 @@
 import 'reflect-metadata'
 
-import { IClassLoggerConfigPartial } from './config'
+import { IClassLoggerConfigPartial } from './config.service'
 import { CLASS_LOGGER_METADATA_KEY } from './constants'
 import { Log } from './log.decorator'
 
