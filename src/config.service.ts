@@ -19,6 +19,7 @@ export class ConfigService {
     formatter: new ClassLoggerFormatterService(),
     include: {
       args: true,
+      classInstance: false,
       construct: true,
       result: true,
     },

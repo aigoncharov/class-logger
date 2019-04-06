@@ -34,6 +34,7 @@ describe(ClassWrapperService.name, () => {
       const meta: IClassLoggerConfigPartial = {
         include: {
           args: false,
+          classInstance: false,
           construct: false,
           result: false,
         },
