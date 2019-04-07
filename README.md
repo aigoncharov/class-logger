@@ -1,6 +1,6 @@
 # class-logger [![Build Status](https://travis-ci.org/keenondrums/class-logger.svg?branch=master)](https://travis-ci.org/keenondrums/class-logger) [![Coverage Status](https://coveralls.io/repos/github/keenondrums/class-logger/badge.svg?branch=master)](https://coveralls.io/github/keenondrums/class-logger?branch=master) [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Boilerplate-free%20decorator-based%20class%20logging.&url=https://github.com/keenondrums/class-logger&hashtags=typescript,javascript,decorators,logging)
 
-Boilerplate-free decorator-based class logging. Log method calls and creation of your class easily with the help of two decorators. No prototype mutation. Highly configurable. Built with TypeScript.
+Boilerplate-free decorator-based class logging. Log method calls and creation of your class easily with the help of two decorators. No prototype mutation. Highly configurable. Built with TypeScript. Works in Node.js and browser.
 
 ```ts
 @LogClass()
@@ -20,10 +20,11 @@ Logs `Test.method1 -> done. Args: []. Res: 123.` after it.
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Installation](#installation)
-- [Quick start](#quick-start)
+- [Requirements](#requirements)
+- [Quick start (Live demo)](#quick-start-live-demo)
 - [Configuration](#configuration)
   - [Configuration object](#configuration-object)
-  - [Hierarchical config](#hierarchical-config)
+  - [Hierarchical config (Live demo)](#hierarchical-config-live-demo)
     - [Global config](#global-config)
     - [Class config](#class-config)
     - [Method config](#method-config)
@@ -38,6 +39,7 @@ Logs `Test.method1 -> done. Args: []. Res: 123.` after it.
     - [Disable logging of method's return value (or thrown error)](#disable-logging-of-methods-return-value-or-thrown-error)
     - [Change logger](#change-logger)
 - [Formatting](#formatting)
+  - [Example: Add timestamp (Live demo)](#example-add-timestamp-live-demo)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -67,7 +69,11 @@ Logs `Test.method1 -> done. Args: []. Res: 123.` after it.
    import 'reflect-metadata'
    ```
 
-## Quick start
+## Requirements
+
+Your evnvironment must support [Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy). For Node.js it's [6.4.0+](https://node.green/), for browsers it's [Edge 12+, Firefox 18+, Chrome 49+, Safari 10+](https://caniuse.com/#search=proxy).
+
+## Quick start [(Live demo)](https://stackblitz.com/edit/class-logger-demo-basic)
 
 You can log:
 
@@ -205,7 +211,7 @@ interface IClassLoggerConfig {
 }
 ```
 
-### Hierarchical config
+### Hierarchical config [(Live demo)](https://stackblitz.com/edit/class-logger-demo-hierarchical-config)
 
 There're 3 layers of config:
 
@@ -490,6 +496,8 @@ You can provide your own object with these two properties, but the easiest way t
 
 Generally speaking, `start` method of `ClassLoggerFormatterService` is `base` + `args` + `classInstance` + `final`. `end` is `base` + `operation` + `args` + `classInstance` + `result` + `final`.
 
+### Example: Add timestamp [(Live demo)](https://stackblitz.com/edit/class-logger-demo-custom-formatter-add-timestamp)
+
 Let's take a look at how we could add a timestamp to the beginning of each message:
 
 ```ts
@@ -500,7 +508,7 @@ class ClassLoggerTimestampFormatterService extends ClassLoggerFormatterService {
     const baseSuper = super.base(data)
     const timestamp = Date.now()
     const baseWithTimestamp = `${timestamp}:${baseSuper}`
-    return baseSuper
+    return baseWithTimestamp
   }
 }
 
