@@ -1,4 +1,4 @@
-# class-logger
+# class-logger [![Build Status](https://travis-ci.org/keenondrums/class-logger.svg?branch=master)](https://travis-ci.org/keenondrums/class-logger) [![Coverage Status](https://coveralls.io/repos/github/keenondrums/class-logger/badge.svg?branch=master)](https://coveralls.io/github/keenondrums/class-logger?branch=master) [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Boilerplate-free%20decorator-based%20class%20logging.&url=https://github.com/keenondrums/class-logger&hashtags=typescript,javascript,decorators,logging)
 
 Boilerplate-free decorator-based class logging. Log method calls and creation of your class easily with a help of two decorators. No prototype mutation. Highly configurable. Built with TypeScript.
 
