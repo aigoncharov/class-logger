@@ -1,6 +1,6 @@
 # class-logger [![Build Status](https://travis-ci.org/keenondrums/class-logger.svg?branch=master)](https://travis-ci.org/keenondrums/class-logger) [![Coverage Status](https://coveralls.io/repos/github/keenondrums/class-logger/badge.svg?branch=master)](https://coveralls.io/github/keenondrums/class-logger?branch=master) [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Boilerplate-free%20decorator-based%20class%20logging.&url=https://github.com/keenondrums/class-logger&hashtags=typescript,javascript,decorators,logging)
 
-Boilerplate-free decorator-based class logging. Log method calls and creation of your class easily with a help of two decorators. No prototype mutation. Highly configurable. Built with TypeScript.
+Boilerplate-free decorator-based class logging. Log method calls and creation of your class easily with the help of two decorators. No prototype mutation. Highly configurable. Built with TypeScript.
 
 ```ts
 @LogClass()
@@ -30,10 +30,10 @@ Logs `Test.method1 -> done. Args: []. Res: 123.` after it.
   - [Include](#include)
     - [classInstance](#classinstance)
   - [Examples](#examples)
-    - [Disable logging of argumnets for all messages](#disable-logging-of-argumnets-for-all-messages)
-    - [Disable logging of argumnets for end messages](#disable-logging-of-argumnets-for-end-messages)
-    - [Enable logging of formatted class instance for all messages](#enable-logging-of-formatted-class-instance-for-all-messages)
-    - [Enable logging of formatted class instance for end messages](#enable-logging-of-formatted-class-instance-for-end-messages)
+    - [Disable logging of arguments for all messages](#disable-logging-of-arguments-for-all-messages)
+    - [Disable logging of arguments for end messages](#disable-logging-of-arguments-for-end-messages)
+    - [Enable logging of a formatted class instance for all messages](#enable-logging-of-a-formatted-class-instance-for-all-messages)
+    - [Enable logging of a formatted class instance for end messages](#enable-logging-of-a-formatted-class-instance-for-end-messages)
     - [Disable logging of class construction](#disable-logging-of-class-construction)
     - [Disable logging of method's return value (or thrown error)](#disable-logging-of-methods-return-value-or-thrown-error)
     - [Change logger](#change-logger)
@@ -146,7 +146,7 @@ test.property1()
 
 ### Configuration object
 
-Here's how configuration object looks like:
+Here's how the configuration object looks like:
 
 ```ts
 interface IClassLoggerConfig {
@@ -265,15 +265,15 @@ class Test {
 
 #### classInstance
 
-It enables/disabled including of the formatted class instance to your log messages. But what does 'formatted' really mean here? So if you decide to include it (remember, it's `false` by default), default class formatter (`ClassLoggerFormatterService`) is going to execute this sequence:
+It enables/disabled including the formatted class instance to your log messages. But what does 'formatted' really mean here? So if you decide to include it (remember, it's `false` by default), default class formatter (`ClassLoggerFormatterService`) is going to execute this sequence:
 
 - Take own (non-prototype) properties of an instance.
   - Why? It's a rare case when your prototype changes dynamically, therefore it hardly makes any sense to log it.
 - Drop any of them that have `function` type.
-  - Why? Most of the time `function` properties are just immuatable arrow functions used instead of regular class methods to preserve `this` context. It doesn't make much sense to bloat your logs with strigified bodies of those functions.
+  - Why? Most of the time `function` properties are just immutable arrow functions used instead of regular class methods to preserve `this` context. It doesn't make much sense to bloat your logs with stringified bodies of those functions.
 - Drop any of them that are not plain objects.
-  - What objects are plain ones? `ClassLoggerFormatterService` considers an object a plain object if its protoype is strictly equal to `Object.prototype`.
-  - Why? Often we include instances of other classes as properties (inject them as dependencies). Our logs would become extremely fat if we included strigified versions of these dependencies.
+  - What objects are plain ones? `ClassLoggerFormatterService` considers an object a plain object if its prototype is strictly equal to `Object.prototype`.
+  - Why? Often we include instances of other classes as properties (inject them as dependencies). Our logs would become extremely fat if we included stringified versions of these dependencies.
 - Stringify what's left.
 
 Example:
@@ -309,11 +309,11 @@ test.method2()
 // 'Test.method2 -> done. Args: []. Class instance: {"prop1":42,"prop2":{"test":42}}. Res: 42.'
 ```
 
-> If class instance is not available at the moment (e.g. for class construction or calls of static methods), it logs `N/A`.
+> If a class instance is not available at the moment (e.g. for class construction or calls of static methods), it logs `N/A`.
 
 ### Examples
 
-#### Disable logging of argumnets for all messages
+#### Disable logging of arguments for all messages
 
 ```ts
 {
@@ -323,7 +323,7 @@ test.method2()
 }
 ```
 
-#### Disable logging of argumnets for end messages
+#### Disable logging of arguments for end messages
 
 ```ts
 {
@@ -336,7 +336,7 @@ test.method2()
 }
 ```
 
-#### Enable logging of formatted class instance for all messages
+#### Enable logging of a formatted class instance for all messages
 
 ```ts
 {
@@ -346,7 +346,7 @@ test.method2()
 }
 ```
 
-#### Enable logging of formatted class instance for end messages
+#### Enable logging of a formatted class instance for end messages
 
 ```ts
 {
@@ -404,11 +404,11 @@ setConfig({
 
 ## Formatting
 
-You can pass your own custom formatter in config to format messages to your liking.
+You can pass your own custom formatter to the config to format messages to your liking.
 
 ```ts
 {
-  formatter: myCustomFormatted
+  formatter: myCustomFormatter
 }
 ```
 
