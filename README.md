@@ -479,7 +479,7 @@ interface IClassLoggerFormatterEndData {
 
 You can provide your own object with these two properties, but the easiest way to modify the formatting logic of `class-logger` is to subclass the default formatter - `ClassLoggerFormatterService`.
 
-`ClassLoggerFormatterService` has these `protected` emthods which are building blocks of final messages:
+`ClassLoggerFormatterService` has these `protected` methods which are building blocks of final messages:
 
 - `base`
 - `operation`
