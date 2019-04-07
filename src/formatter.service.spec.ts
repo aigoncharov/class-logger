@@ -21,6 +21,7 @@ describe(ClassLoggerFormatterService.name, () => {
     public testService = new TestService()
     public propNull = null
     public prop3 = valTestClassProp3
+    public propFn = () => null
   }
   const testClassStringExpected = stringify({
     prop1: valTestClassProp1,

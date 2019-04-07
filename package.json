@@ -1,7 +1,16 @@
 {
   "name": "class-logger",
   "version": "1.0.0",
-  "description": "",
+  "description": "Boilerplate-free decorator-based class logging",
+  "keywords": [
+    "decorator",
+    "log",
+    "logging",
+    "logger",
+    "class",
+    "bolierplate",
+    "proxy"
+  ],
   "main": "dist/index.js",
   "scripts": {
     "test": "npx jest -i",
@@ -40,7 +49,6 @@
     "reflect-metadata": "^0.1.13"
   },
   "dependencies": {
-    "@keenondrums/metadata-utils": "^1.0.1",
     "fast-safe-stringify": "^2.0.6"
   }
 }

@@ -31,7 +31,16 @@ describe('index', () => {
     public static staticError(arg1: string, arg2: string) {
       throw new TestError()
     }
+
     public prop1 = 123
+
+    @Log()
+    public propSyncSuccess = () => successRes
+    @Log()
+    public propSyncError = () => {
+      throw new TestError()
+    }
+
     @Log({
       log: (message) => console.debug(message), // tslint:disable-line no-console
     })
@@ -80,6 +89,32 @@ describe('index', () => {
     expect(spyConsoleInfo).toBeCalledWith('Test.staticError. Args: [test1, test2]. Class instance: N/A.')
     expect(spyConsoleError).toBeCalledWith(
       'Test.staticError -> error. Args: [test1, test2]. Class instance: N/A. Res: {"className":"TestError","code":"codeTest","message":"messageTest","name":"Error","stack":"stackTest"}.',
+    )
+  })
+  test('propSyncSuccess', () => {
+    const spyConsoleInfo = jest.spyOn(console, 'info')
+    const spyConsoleError = jest.spyOn(console, 'error')
+    const res = new Test().propSyncSuccess()
+    expect(res).toBe(successRes)
+    expect(spyConsoleError).toBeCalledTimes(0)
+    expect(spyConsoleInfo).toBeCalledTimes(3)
+    expect(spyConsoleInfo).toHaveBeenNthCalledWith(1, 'Test.construct. Args: []. Class instance: N/A.')
+    expect(spyConsoleInfo).toHaveBeenNthCalledWith(2, 'Test.propSyncSuccess. Args: []. Class instance: {"prop1":123}.')
+    expect(spyConsoleInfo).toHaveBeenNthCalledWith(
+      3,
+      'Test.propSyncSuccess -> done. Args: []. Class instance: {"prop1":123}. Res: syncSuccessResTest.',
+    )
+  })
+  test('propSyncError', () => {
+    const spyConsoleInfo = jest.spyOn(console, 'info')
+    const spyConsoleError = jest.spyOn(console, 'error')
+    expect(() => new Test().propSyncError()).toThrow(TestError)
+    expect(spyConsoleError).toBeCalledTimes(1)
+    expect(spyConsoleInfo).toBeCalledTimes(2)
+    expect(spyConsoleInfo).toHaveBeenNthCalledWith(1, 'Test.construct. Args: []. Class instance: N/A.')
+    expect(spyConsoleInfo).toHaveBeenNthCalledWith(2, 'Test.propSyncError. Args: []. Class instance: {"prop1":123}.')
+    expect(spyConsoleError).toBeCalledWith(
+      'Test.propSyncError -> error. Args: []. Class instance: {"prop1":123}. Res: {"className":"TestError","code":"codeTest","message":"messageTest","name":"Error","stack":"stackTest"}.',
     )
   })
   test('syncSuccess', () => {

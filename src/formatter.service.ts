@@ -84,7 +84,7 @@ export class ClassLoggerFormatterService implements IClassLoggerFormatter {
     const classInsanceFiltered: { [key: string]: any } = {}
     for (const key of Object.keys(classInstance)) {
       const value = classInstance[key]
-      if (typeof value === 'object' && !this.isPlainObjectOrArray(value)) {
+      if (typeof value === 'function' || (typeof value === 'object' && !this.isPlainObjectOrArray(value))) {
         continue
       }
       classInsanceFiltered[key] = value
