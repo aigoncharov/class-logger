@@ -21,6 +21,11 @@ describe(ClassWrapperService.name, () => {
       const isPromise = classWrapperService.isPromise({})
       expect(isPromise).toBe(false)
     })
+    test('returns false for null', () => {
+      const classWrapperService: any = new ClassWrapperService()
+      const isPromise = classWrapperService.isPromise(null)
+      expect(isPromise).toBe(false)
+    })
     test('returns false for non-objects', () => {
       const classWrapperService: any = new ClassWrapperService()
       const isPromise = classWrapperService.isPromise('invalid')

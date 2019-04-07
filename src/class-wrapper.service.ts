@@ -79,7 +79,7 @@ export class ClassWrapperService {
   }
 
   protected isPromise(val: any) {
-    return typeof val === 'object' && typeof val.then === 'function' && typeof val.catch === 'function'
+    return !!val && typeof val === 'object' && typeof val.then === 'function' && typeof val.catch === 'function'
   }
 
   protected classGetConfigMerged(target: object) {
