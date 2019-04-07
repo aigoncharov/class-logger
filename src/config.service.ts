@@ -1,13 +1,13 @@
 import { ClassLoggerFormatterService, IClassLoggerFormatter, IClassLoggerIncludeConfig } from './formatter.service'
 
 type ClassLoggerFormatterLogger = (message: string) => void
-export interface IClassLoggerConfig {
+export interface IClassLoggerConfigComplete {
   log: ClassLoggerFormatterLogger
   logError: ClassLoggerFormatterLogger
   formatter: IClassLoggerFormatter
   include: IClassLoggerIncludeConfig
 }
-export interface IClassLoggerConfigPartial {
+export interface IClassLoggerConfig {
   log?: ClassLoggerFormatterLogger
   logError?: ClassLoggerFormatterLogger
   formatter?: IClassLoggerFormatter
@@ -15,7 +15,7 @@ export interface IClassLoggerConfigPartial {
 }
 
 export class ConfigService {
-  public static config: IClassLoggerConfig = {
+  public static config: IClassLoggerConfigComplete = {
     formatter: new ClassLoggerFormatterService(),
     include: {
       args: true,
@@ -23,11 +23,12 @@ export class ConfigService {
       construct: true,
       result: true,
     },
-    log: console.log, // tslint:disable-line no-console
-    logError: console.error, // tslint:disable-line no-console
+    log: (message) => console.log(message), // tslint:disable-line no-console
+    logError: (message) => console.error(message), // tslint:disable-line no-console
   }
-  public static configsMerge(config: IClassLoggerConfig, ...configsPartial: IClassLoggerConfigPartial[]) {
-    return configsPartial.reduce<IClassLoggerConfig>(
+
+  public static configsMerge(config: IClassLoggerConfigComplete, ...configsPartial: IClassLoggerConfig[]) {
+    return configsPartial.reduce<IClassLoggerConfigComplete>(
       (configRes, configPartial) => ({
         ...configRes,
         ...configPartial,
@@ -40,7 +41,7 @@ export class ConfigService {
     )
   }
 
-  public static setConfig(config: IClassLoggerConfigPartial) {
+  public static setConfig(config: IClassLoggerConfig) {
     this.config = this.configsMerge(this.config, config)
   }
 }

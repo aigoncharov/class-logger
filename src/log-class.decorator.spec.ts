@@ -1,13 +1,13 @@
 import 'reflect-metadata'
 
 import { ClassWrapperService } from './class-wrapper.service'
-import { IClassLoggerConfigPartial } from './config.service'
+import { IClassLoggerConfig } from './config.service'
 import { CLASS_LOGGER_METADATA_KEY } from './constants'
 import { LogClass } from './log-class.decorator'
 
 describe('@LogClass', () => {
   test('adds meta for class constructor', () => {
-    const config: IClassLoggerConfigPartial = {
+    const config: IClassLoggerConfig = {
       include: {
         args: false,
       },

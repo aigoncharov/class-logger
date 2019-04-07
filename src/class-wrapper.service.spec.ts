@@ -1,7 +1,7 @@
 import 'reflect-metadata'
 
 import { ClassWrapperService } from './class-wrapper.service'
-import { ConfigService, IClassLoggerConfigPartial } from './config.service'
+import { ConfigService, IClassLoggerConfig } from './config.service'
 import { CLASS_LOGGER_METADATA_KEY } from './constants'
 
 describe(ClassWrapperService.name, () => {
@@ -31,7 +31,7 @@ describe(ClassWrapperService.name, () => {
   describe('classGetConfigMerged', () => {
     test('returns a merged config', () => {
       class Test {}
-      const meta: IClassLoggerConfigPartial = {
+      const meta: IClassLoggerConfig = {
         include: {
           args: false,
           classInstance: false,
@@ -242,7 +242,7 @@ describe(ClassWrapperService.name, () => {
 
   describe('wrap', () => {
     test('wraps class and logs its construction', () => {
-      const config: IClassLoggerConfigPartial = {}
+      const config: IClassLoggerConfig = {}
 
       class Test {}
 
@@ -264,7 +264,7 @@ describe(ClassWrapperService.name, () => {
       expect(spyWrapClassInstance).toBeCalledTimes(1)
     })
     test("wraps class and  doesn't log its construction", () => {
-      const config: IClassLoggerConfigPartial = {
+      const config: IClassLoggerConfig = {
         include: {
           construct: false,
         },

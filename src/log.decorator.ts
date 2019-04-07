@@ -1,6 +1,6 @@
-import { IClassLoggerConfigPartial } from './config.service'
+import { IClassLoggerConfig } from './config.service'
 import { CLASS_LOGGER_METADATA_KEY } from './constants'
 
-export const Log = (config: IClassLoggerConfigPartial = {}) => (target: object, propertyKey: string | symbol) => {
+export const Log = (config: IClassLoggerConfig = {}) => (target: object, propertyKey: string | symbol) => {
   Reflect.defineMetadata(CLASS_LOGGER_METADATA_KEY, config, target, propertyKey)
 }

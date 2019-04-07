@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "test": "npx jest",
+    "test": "npx jest -i",
     "compile": "npx shx rm -rf dist && npx tsc -p tsconfig.prod.json",
     "lint": "npx tsc -p tsconfig.json --noEmit && npx tslint -c tslint.json -p tsconfig.json",
     "prepack": "npm run compile",

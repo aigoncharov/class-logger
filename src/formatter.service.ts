@@ -95,7 +95,13 @@ export class ClassLoggerFormatterService implements IClassLoggerFormatter {
     return args.map((arg) => (typeof arg === 'object' ? stringify(arg) : arg.toString())).join(', ')
   }
   protected resultToString(res: any) {
-    return typeof res === 'object' ? stringify(res) : res.toString()
+    if (typeof res !== 'object') {
+      return res.toString()
+    }
+    if (res instanceof Error) {
+      res = this.errorFormat(res)
+    }
+    return stringify(res)
   }
 
   protected includeComplex(
@@ -113,5 +119,14 @@ export class ClassLoggerFormatterService implements IClassLoggerFormatter {
     }
     const proto = Object.getPrototypeOf(obj)
     return proto === Object.prototype || proto === Array.prototype
+  }
+  protected errorFormat(error: Error & { code?: string }) {
+    return {
+      className: error.constructor.name,
+      code: error.code,
+      message: error.message,
+      name: error.name,
+      stack: error.stack,
+    }
   }
 }

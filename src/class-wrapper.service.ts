@@ -1,50 +1,25 @@
-import { ConfigService, IClassLoggerConfig, IClassLoggerConfigPartial } from './config.service'
+import { ConfigService, IClassLoggerConfig, IClassLoggerConfigComplete } from './config.service'
 import { CLASS_LOGGER_METADATA_KEY } from './constants'
 
 export class ClassWrapperService {
-  public wrap(targetWrap: new (...args: any) => any) {
-    const classWrapper = this
+  public wrap<T extends new (...args: any) => any>(targetWrap: T) {
+    const get = this.makeProxyTrapGet(targetWrap.name)
     return new Proxy(targetWrap, {
-      construct(target, args, newTarget) {
-        const config = classWrapper.classGetConfigMerged(target.prototype)
-        if (config.include.construct) {
-          const messageStart = config.formatter.start({
-            args,
-            className: target.name,
-            include: config.include,
-            propertyName: 'construct',
-          })
-          config.log(messageStart)
-        }
-        const instance = Reflect.construct(target, args, newTarget)
-        const instanceWrapped = classWrapper.wrapClassInstance(instance)
-        return instanceWrapped
-      },
+      construct: this.proxyTrapConstruct,
+      // We need get trap for static properties and methods
+      get,
     })
   }
 
   protected wrapClassInstance(instance: object) {
-    const classWrapper = this
+    const get = this.makeProxyTrapGet(instance.constructor.name)
     return new Proxy(instance, {
-      get(target, property: string | symbol, receiver) {
-        const prop = Reflect.get(target, property, receiver)
-        if (typeof prop !== 'function') {
-          return prop
-        }
-        const configProp = Reflect.getMetadata(CLASS_LOGGER_METADATA_KEY, target, property)
-        if (!configProp) {
-          return prop
-        }
-        const configClass = classWrapper.classGetConfigMerged(target)
-        const configFinal = ConfigService.configsMerge(configClass, configProp)
-        const propWrapped = classWrapper.wrapFunction(configFinal, prop, instance.constructor.name, property, target)
-        return propWrapped
-      },
+      get,
     })
   }
 
   protected wrapFunction<T extends (...args: any[]) => any>(
-    config: IClassLoggerConfig,
+    config: IClassLoggerConfigComplete,
     fn: T,
     className: string,
     propertyName: string | symbol,
@@ -108,8 +83,38 @@ export class ClassWrapperService {
   }
 
   protected classGetConfigMerged(target: object) {
-    const configClassMeta: IClassLoggerConfigPartial = Reflect.getMetadata(CLASS_LOGGER_METADATA_KEY, target)
+    const configClassMeta: IClassLoggerConfig = Reflect.getMetadata(CLASS_LOGGER_METADATA_KEY, target)
     const configRes = ConfigService.configsMerge(ConfigService.config, configClassMeta)
     return configRes
+  }
+
+  protected proxyTrapConstruct = <T extends new (...args: any) => any>(target: T, args: any, newTarget: any) => {
+    const config = this.classGetConfigMerged(target.prototype)
+    if (config.include.construct) {
+      const messageStart = config.formatter.start({
+        args,
+        className: target.name,
+        include: config.include,
+        propertyName: 'construct',
+      })
+      config.log(messageStart)
+    }
+    const instance = Reflect.construct(target, args, newTarget)
+    const instanceWrapped = this.wrapClassInstance(instance)
+    return instanceWrapped
+  }
+  protected makeProxyTrapGet = (className: string) => (target: object, property: string | symbol, receiver: any) => {
+    const prop = Reflect.get(target, property, receiver)
+    if (typeof prop !== 'function') {
+      return prop
+    }
+    const configProp = Reflect.getMetadata(CLASS_LOGGER_METADATA_KEY, target, property)
+    if (!configProp) {
+      return prop
+    }
+    const configClass = this.classGetConfigMerged(target)
+    const configFinal = ConfigService.configsMerge(configClass, configProp)
+    const propWrapped = this.wrapFunction(configFinal, prop, className, property, target)
+    return propWrapped
   }
 }
