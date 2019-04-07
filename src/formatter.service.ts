@@ -65,13 +65,13 @@ export class ClassLoggerFormatterService implements IClassLoggerFormatter {
     return error ? ' -> error' : ' -> done'
   }
   protected args({ args }: IClassLoggerFormatterStartData) {
-    return `. Args: [${this.argsToString(args)}]`
+    return `. Args: ${this.valueToString(args)}`
   }
   protected classInstance({ classInstance }: IClassLoggerFormatterStartData) {
     return `. Class instance: ${this.classInstanceToString(classInstance)}`
   }
   protected result({ result }: IClassLoggerFormatterEndData) {
-    return `. Res: ${this.resultToString(result)}`
+    return `. Res: ${this.valueToString(result)}`
   }
   protected final() {
     return '.'
@@ -91,15 +91,16 @@ export class ClassLoggerFormatterService implements IClassLoggerFormatter {
     }
     return stringify(classInsanceFiltered)
   }
-  protected argsToString(args: any[]) {
-    return args.map((arg) => (typeof arg === 'object' ? stringify(arg) : arg.toString())).join(', ')
-  }
-  protected resultToString(res: any) {
+  protected valueToString(res: any): string {
     if (typeof res !== 'object') {
       return res.toString()
     }
     if (res instanceof Error) {
       res = this.errorFormat(res)
+    }
+    if (Array.isArray(res)) {
+      const arrayWithStringifiedElements = res.map(this.valueToString)
+      return `[${arrayWithStringifiedElements.join(', ')}]`
     }
     return stringify(res)
   }
