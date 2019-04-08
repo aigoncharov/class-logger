@@ -28,7 +28,7 @@ export class ClassWrapperService {
     const classWrapper = this
     // Use non-arrow function to allow dynamic context
     // tslint:disable-next-line only-arrow-functions
-    return function(...args: any[]) {
+    return function(this: any, ...args: any[]) {
       const messageStart = config.formatter.start({
         args,
         classInstance,
@@ -56,7 +56,7 @@ export class ClassWrapperService {
       }
 
       try {
-        const res = fn(...args)
+        const res = fn.apply(this, args)
         if (classWrapper.isPromise(res)) {
           res
             .then((result: any) => {

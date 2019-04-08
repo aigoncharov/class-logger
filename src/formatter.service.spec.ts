@@ -29,7 +29,7 @@ describe(ClassLoggerFormatterService.name, () => {
     prop3: valTestClassProp3,
   })
   const dataStart: IClassLoggerFormatterStartData = {
-    args: ['test', Symbol(), { test: '123' }],
+    args: ['test', Symbol(), { test: '123' }, undefined],
     classInstance: new TestClass(),
     className: 'ClassNameTest',
     include: {
@@ -93,7 +93,7 @@ describe(ClassLoggerFormatterService.name, () => {
     test('returns stringified args', () => {
       const argsStr = (classLoggerFormatterService as any).args(dataStart)
       expect(argsStr).toBe(
-        `. Args: [${dataStart.args[0]}, ${dataStart.args[1].toString()}, ${stringify(dataStart.args[2])}]`,
+        `. Args: [${dataStart.args[0]}, ${dataStart.args[1].toString()}, ${stringify(dataStart.args[2])}, undefined]`,
       )
     })
   })
@@ -114,6 +114,13 @@ describe(ClassLoggerFormatterService.name, () => {
     test('returns non-object result', () => {
       const resStr = (classLoggerFormatterService as any).result(dataEnd)
       expect(resStr).toBe(`. Res: ${dataEnd.result}`)
+    })
+    test('returns undefined', () => {
+      const resStr = (classLoggerFormatterService as any).result({
+        ...dataEnd,
+        result: undefined,
+      })
+      expect(resStr).toBe(`. Res: undefined`)
     })
     test('returns stringified object result', () => {
       const resultObj = {

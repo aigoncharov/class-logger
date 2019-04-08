@@ -1,6 +1,6 @@
 {
   "name": "class-logger",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Boilerplate-free decorator-based class logging",
   "keywords": [
     "decorator",

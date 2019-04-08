@@ -30,6 +30,7 @@ export interface IClassLoggerIncludeConfig {
 
 export class ClassLoggerFormatterService implements IClassLoggerFormatter {
   protected readonly placeholderNotAvailable = 'N/A'
+  protected readonly placeholderUndefined = 'undefined'
 
   public start(data: IClassLoggerFormatterStartData) {
     let message = this.base(data)
@@ -92,6 +93,9 @@ export class ClassLoggerFormatterService implements IClassLoggerFormatter {
     return stringify(classInsanceFiltered)
   }
   protected valueToString(res: any): string {
+    if (res === undefined) {
+      return this.placeholderUndefined
+    }
     if (typeof res !== 'object') {
       return res.toString()
     }
@@ -99,7 +103,7 @@ export class ClassLoggerFormatterService implements IClassLoggerFormatter {
       res = this.errorFormat(res)
     }
     if (Array.isArray(res)) {
-      const arrayWithStringifiedElements = res.map(this.valueToString)
+      const arrayWithStringifiedElements = res.map(this.valueToString.bind(this))
       return `[${arrayWithStringifiedElements.join(', ')}]`
     }
     return stringify(res)

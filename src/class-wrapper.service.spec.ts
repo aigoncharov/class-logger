@@ -54,7 +54,7 @@ describe(ClassWrapperService.name, () => {
   })
 
   describe('wrapFunction', () => {
-    const logsSuccess = async (fn: jest.Mock, fnRes: any) => {
+    const logsSuccess = async (fn: jest.Mock, fnRes: any, ctx?: any) => {
       const config = ConfigService.config
       const className = 'Test'
       const propertyName = 'test'
@@ -73,8 +73,14 @@ describe(ClassWrapperService.name, () => {
       const spyLogError = jest.spyOn(config, 'logError')
 
       const classWrapperService: any = new ClassWrapperService()
-      const fnWrapped = classWrapperService.wrapFunction(config, fn, className, propertyName, classInstance)
-      const fnWrappedRes = await fnWrapped(...argsTest)
+      const fnWrapped: (...args: any) => any = classWrapperService.wrapFunction(
+        config,
+        fn,
+        className,
+        propertyName,
+        classInstance,
+      )
+      const fnWrappedRes = await fnWrapped.apply(ctx, argsTest)
       expect(fnWrappedRes).toBe(fnRes)
       expect(fn).toBeCalledTimes(1)
       expect(fn).toBeCalledWith(...argsTest)
@@ -121,7 +127,13 @@ describe(ClassWrapperService.name, () => {
       const spyLogError = jest.spyOn(config, 'logError')
 
       const classWrapperService: any = new ClassWrapperService()
-      const fnWrapped = classWrapperService.wrapFunction(config, fn, className, propertyName, classInstance)
+      const fnWrapped: (...args: any[]) => any = classWrapperService.wrapFunction(
+        config,
+        fn,
+        className,
+        propertyName,
+        classInstance,
+      )
       const fnWrappedPromise = (async () => fnWrapped(...argsTest))()
       await expect(fnWrappedPromise).rejects.toThrow(error)
       expect(fn).toBeCalledTimes(1)
@@ -163,6 +175,16 @@ describe(ClassWrapperService.name, () => {
           throw error
         })
         await logError(fn, error)
+      })
+      test('preserves this context', async () => {
+        const fnRes = Symbol()
+        const ctx = {}
+        // tslint:disable-next-line only-arrow-functions
+        const fn = jest.fn(function(this: any) {
+          expect(this).toBe(ctx)
+          return fnRes
+        })
+        await logsSuccess(fn, fnRes, ctx)
       })
     })
 
@@ -268,7 +290,7 @@ describe(ClassWrapperService.name, () => {
       })
       expect(spyWrapClassInstance).toBeCalledTimes(1)
     })
-    test("wraps class and  doesn't log its construction", () => {
+    test("wraps class and doesn't log its construction", () => {
       const config: IClassLoggerConfig = {
         include: {
           construct: false,
