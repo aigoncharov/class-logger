@@ -1,6 +1,6 @@
 # class-logger [![Build Status](https://travis-ci.org/keenondrums/class-logger.svg?branch=master)](https://travis-ci.org/keenondrums/class-logger) [![Coverage Status](https://coveralls.io/repos/github/keenondrums/class-logger/badge.svg?branch=master)](https://coveralls.io/github/keenondrums/class-logger?branch=master) [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Boilerplate-free%20decorator-based%20class%20logging.&url=https://github.com/keenondrums/class-logger&hashtags=typescript,javascript,decorators,logging)
 
-Boilerplate-free decorator-based class logging. Log method calls and creation of your class easily with the help of two decorators. No prototype mutation. Highly configurable. Built with TypeScript. Works in Node.js and browser.
+Boilerplate-free decorator-based class logging. Log method calls and creation of your class easily with the help of two decorators. No prototype mutation. Highly configurable. Built with TypeScript. Works with Node.js and in browser.
 
 ```ts
 @LogClass()
@@ -39,7 +39,8 @@ Logs `Test.method1 -> done. Args: []. Res: 123.` after it.
     - [Disable logging of method's return value (or thrown error)](#disable-logging-of-methods-return-value-or-thrown-error)
     - [Change logger](#change-logger)
 - [Formatting](#formatting)
-  - [Example: Add timestamp (Live demo)](#example-add-timestamp-live-demo)
+  - [Examples](#examples-1)
+    - [Add timestamp (Live demo)](#add-timestamp-live-demo)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -496,7 +497,9 @@ You can provide your own object with these two properties, but the easiest way t
 
 Generally speaking, `start` method of `ClassLoggerFormatterService` is `base` + `args` + `classInstance` + `final`. `end` is `base` + `operation` + `args` + `classInstance` + `result` + `final`.
 
-### Example: Add timestamp [(Live demo)](https://stackblitz.com/edit/class-logger-demo-custom-formatter-add-timestamp)
+### Examples
+
+#### Add timestamp [(Live demo)](https://stackblitz.com/edit/class-logger-demo-custom-formatter-add-timestamp)
 
 Let's take a look at how we could add a timestamp to the beginning of each message:
 
@@ -516,3 +519,5 @@ setConfig({
   formatter: new ClassLoggerTimestampFormatterService(),
 })
 ```
+
+> FYI, [winston](https://github.com/winstonjs/winston), [pino](https://github.com/pinojs/pino) and pretty much any other logger are capable of adding timestamps on their own, so this example is purely educative. I'd advice to use your logger's built-in mechanism for creating timestamps if possible.
