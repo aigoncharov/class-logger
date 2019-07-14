@@ -162,6 +162,24 @@ describe(ClassWrapperService.name, () => {
       expect(spyLogError).toBeCalledWith(spyFormatterEndMockRes)
     }
 
+    test('copies own properties of a target function', () => {
+      const testProp = 'test'
+      const testPropVal = Symbol()
+
+      const fn = jest.fn() as any
+      fn[testProp] = testPropVal
+
+      const config = ConfigService.config
+      const className = 'Test'
+      const propertyName = 'test'
+      const classInstance = {}
+
+      const classWrapperService: any = new ClassWrapperService()
+      const fnWrapped = classWrapperService.wrapFunction(config, fn, className, propertyName, classInstance)
+
+      expect(fnWrapped[testProp]).toBe(testPropVal)
+    })
+
     describe('synchronous target function', () => {
       test('logs success', async () => {
         const fnRes = Symbol()

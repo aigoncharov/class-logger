@@ -28,7 +28,7 @@ export class ClassWrapperService {
     const classWrapper = this
     // Use non-arrow function to allow dynamic context
     // tslint:disable-next-line only-arrow-functions
-    return function(this: any, ...args: any[]) {
+    const res = function(this: any, ...args: any[]) {
       const messageStart = config.formatter.start({
         args,
         classInstance,
@@ -76,6 +76,13 @@ export class ClassWrapperService {
         throw error
       }
     } as T
+
+    // Functions are objects as well. They might have own properties.
+    for (const prop of Object.keys(fn) as Array<keyof T>) {
+      res[prop] = fn[prop]
+    }
+
+    return res
   }
 
   protected isPromise(val: any) {

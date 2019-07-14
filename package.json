@@ -1,6 +1,6 @@
 {
   "name": "class-logger",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Boilerplate-free decorator-based class logging",
   "keywords": [
     "decorator",
@@ -23,7 +23,7 @@
     "type": "git",
     "url": "git+https://github.com/keenondrums/class-logger.git"
   },
-  "author": "keenondrums (andrey.goncharov+it@protonmail.com)",
+  "author": "keenondrums (andrey@goncharov.page)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/keenondrums/class-logger/issues"
