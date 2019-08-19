@@ -56,9 +56,9 @@ export class ClassWrapperService {
       }
 
       try {
-        const res = fn.apply(this, args)
-        if (classWrapper.isPromise(res)) {
-          res
+        const fnRes = fn.apply(this, args)
+        if (classWrapper.isPromise(fnRes)) {
+          fnRes
             .then((result: any) => {
               logEnd(result)
               return result
@@ -67,10 +67,10 @@ export class ClassWrapperService {
               logEnd(error, true)
               throw error
             })
-          return res
+          return fnRes
         }
-        logEnd(res)
-        return res
+        logEnd(fnRes)
+        return fnRes
       } catch (error) {
         logEnd(error, true)
         throw error
