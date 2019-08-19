@@ -56,9 +56,9 @@ export class ClassWrapperService {
       }
 
       try {
-        const fnRes = fn.apply(this, args)
+        let fnRes = fn.apply(this, args)
         if (classWrapper.isPromise(fnRes)) {
-          fnRes
+          fnRes = fnRes
             .then((result: any) => {
               logEnd(result)
               return result
