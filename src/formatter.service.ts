@@ -112,7 +112,7 @@ export class ClassLoggerFormatterService implements IClassLoggerFormatter {
       return val.toString()
     }
     if (val instanceof Error) {
-      val = this.errorFormat(val)
+      return this.errorToString(val)
     }
     if (!this.isPlainObjectOrArray(val)) {
       return this.complexObjectToString(val)
@@ -140,13 +140,13 @@ export class ClassLoggerFormatterService implements IClassLoggerFormatter {
     const proto = Object.getPrototypeOf(obj)
     return proto === Object.prototype || proto === Array.prototype
   }
-  protected errorFormat(error: Error & { code?: string }) {
-    return {
-      className: error.constructor.name,
+  protected errorToString(error: Error & { code?: string }) {
+    const data = {
       code: error.code,
       message: error.message,
       name: error.name,
       stack: error.stack,
     }
+    return `${error.constructor.name} ${stringify(data)}`
   }
 }

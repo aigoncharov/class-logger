@@ -149,13 +149,16 @@ describe(ClassLoggerFormatterService.name, () => {
       expect(resStr).toBe(`. Res: [${stringify(resultArr[0])}, ${resultArr[1]}]`)
     })
     test('returns a serialized error result', () => {
-      class TestError extends Error {}
+      class TestError extends Error {
+        public code = 101
+      }
       const result = new TestError()
+      result.stack = 'test'
       const resStr = (classLoggerFormatterService as any).result({
         ...dataEnd,
         result,
       })
-      expect(resStr).toBe(`. Res: ${stringify((classLoggerFormatterService as any).errorFormat(result))}`)
+      expect(resStr).toBe(`. Res: TestError ${stringify({ code: 101, message: '', name: 'Error', stack: 'test' })}`)
     })
     test('returns serialized complex object result', () => {
       class A {

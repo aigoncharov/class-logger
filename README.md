@@ -1,4 +1,4 @@
-# class-logger [![Build Status](https://travis-ci.org/keenondrums/class-logger.svg?branch=master)](https://travis-ci.org/keenondrums/class-logger) [![Coverage Status](https://coveralls.io/repos/github/keenondrums/class-logger/badge.svg?branch=master)](https://coveralls.io/github/keenondrums/class-logger?branch=master) [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Boilerplate-free%20decorator-based%20class%20logging.&url=https://github.com/keenondrums/class-logger&hashtags=typescript,javascript,decorators,logging)
+# class-logger [![Build Status](https://travis-ci.org/aigoncharov/class-logger.svg?branch=master)](https://travis-ci.org/aigoncharov/class-logger) [![Coverage Status](https://coveralls.io/repos/github/aigoncharov/class-logger/badge.svg?branch=master)](https://coveralls.io/github/aigoncharov/class-logger?branch=master) [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Boilerplate-free%20decorator-based%20class%20logging.&url=https://github.com/aigoncharov/class-logger&hashtags=typescript,javascript,decorators,logging)
 
 Boilerplate-free decorator-based class logging. Log method calls and creation of your class easily with the help of two decorators. No prototype mutation. Highly configurable. Built with TypeScript. Works with Node.js and in browser.
 
@@ -72,7 +72,7 @@ Logs `Test.method1 -> done. Args: []. Res: 123.` after it.
 
 ## Requirements
 
-Your evnvironment must support [Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy). For Node.js it's [6.4.0+](https://node.green/), for browsers it's [Edge 12+, Firefox 18+, Chrome 49+, Safari 10+](https://caniuse.com/#search=proxy).
+Your environment must support [Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy). For Node.js it's [6.4.0+](https://node.green/), for browsers it's [Edge 12+, Firefox 18+, Chrome 49+, Safari 10+](https://caniuse.com/#search=proxy).
 
 ## Quick start [(Live demo)](https://stackblitz.com/edit/class-logger-demo-basic)
 
@@ -140,7 +140,7 @@ test.methodAsync1()
 // 'Test.methodError. Args: [].'
 test.methodError()
 // Logs to the console after the method call:
-// 'Test.methodError -> error. Args: []. Res: {"className":"Error","name":"Error","message":"","stack":"some stack trace"}.'
+// 'Test.methodError -> error. Args: []. Res: Error {"name":"Error","message":"","stack":"some stack trace"}.'
 
 // Logs to the console before the method call:
 // 'Test.property1. Args: [].'
@@ -278,9 +278,9 @@ It enables/disabled including the formatted class instance to your log messages.
   - Why? It's a rare case when your prototype changes dynamically, therefore it hardly makes any sense to log it.
 - Drop any of them that have `function` type.
   - Why? Most of the time `function` properties are just immutable arrow functions used instead of regular class methods to preserve `this` context. It doesn't make much sense to bloat your logs with stringified bodies of those functions.
-- Drop any of them that are not plain objects.
+- Transform any of them that are not plain objects recursively.
   - What objects are plain ones? `ClassLoggerFormatterService` considers an object a plain object if its prototype is strictly equal to `Object.prototype`.
-  - Why? Often we include instances of other classes as properties (inject them as dependencies). Our logs would become extremely fat if we included stringified versions of these dependencies.
+  - Why? Often we include instances of other classes as properties (inject them as dependencies). By stringifying them using the same algorithm we can see what we injected.
 - Stringify what's left.
 
 Example:
@@ -306,14 +306,14 @@ class Test {
 }
 
 // Logs to the console before the class' construction:
-// 'Test.construct. Args: []. Class instance: {"prop1":42,"prop2":{"test":42}}.'
+// 'Test.construct. Args: []. Class instance: {"serviceA": ServiceA {},"prop1":42,"prop2":{"test":42}}.'
 const test = new Test()
 
 // Logs to the console before the method call:
-// 'Test.method2. Args: []. Class instance: {"prop1":42,"prop2":{"test":42}}.'
+// 'Test.method2. Args: []. Class instance: {"serviceA": ServiceA {},"prop1":42,"prop2":{"test":42}}.'
 test.method2()
 // Logs to the console after the method call:
-// 'Test.method2 -> done. Args: []. Class instance: {"prop1":42,"prop2":{"test":42}}. Res: 42.'
+// 'Test.method2 -> done. Args: []. Class instance: {"serviceA": ServiceA {},"prop1":42,"prop2":{"test":42}}. Res: 42.'
 ```
 
 > If a class instance is not available at the moment (e.g. for class construction or calls of static methods), it logs `N/A`.

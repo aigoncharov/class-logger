@@ -88,7 +88,7 @@ describe('index', () => {
     expect(spyConsoleInfo).toBeCalledTimes(1)
     expect(spyConsoleInfo).toBeCalledWith('Test.staticError. Args: [test1, test2]. Class instance: N/A.')
     expect(spyConsoleError).toBeCalledWith(
-      'Test.staticError -> error. Args: [test1, test2]. Class instance: N/A. Res: {"className":"TestError","code":"codeTest","message":"messageTest","name":"Error","stack":"stackTest"}.',
+      'Test.staticError -> error. Args: [test1, test2]. Class instance: N/A. Res: TestError {"code":"codeTest","message":"messageTest","name":"Error","stack":"stackTest"}.',
     )
   })
   test('propSyncSuccess', () => {
@@ -120,7 +120,7 @@ describe('index', () => {
       'Test.propSyncError. Args: []. Class instance: Test {"prop1":123}.',
     )
     expect(spyConsoleError).toBeCalledWith(
-      'Test.propSyncError -> error. Args: []. Class instance: Test {"prop1":123}. Res: {"className":"TestError","code":"codeTest","message":"messageTest","name":"Error","stack":"stackTest"}.',
+      'Test.propSyncError -> error. Args: []. Class instance: Test {"prop1":123}. Res: TestError {"code":"codeTest","message":"messageTest","name":"Error","stack":"stackTest"}.',
     )
   })
   test('syncSuccess', () => {
@@ -153,7 +153,7 @@ describe('index', () => {
     expect(spyConsoleInfo).toBeCalledWith('Test.construct. Args: []. Class instance: N/A.')
     expect(spyConsoleDebug).toBeCalledWith('Test.syncError. Args: []. Class instance: Test {"prop1":123}.')
     expect(spyConsoleError).toBeCalledWith(
-      'Test.syncError -> error. Args: []. Class instance: Test {"prop1":123}. Res: {"className":"TestError","code":"codeTest","message":"messageTest","name":"Error","stack":"stackTest"}.',
+      'Test.syncError -> error. Args: []. Class instance: Test {"prop1":123}. Res: TestError {"code":"codeTest","message":"messageTest","name":"Error","stack":"stackTest"}.',
     )
   })
   test('asyncSuccess', async () => {
@@ -189,7 +189,7 @@ describe('index', () => {
       'Test.asyncError. Args: [Symbol()]. Class instance: Test {"prop1":123}.',
     )
     expect(spyConsoleDebug).toBeCalledWith(
-      'Test.asyncError -> error. Args: [Symbol()]. Class instance: Test {"prop1":123}. Res: {"className":"TestError","code":"codeTest","message":"messageTest","name":"Error","stack":"stackTest"}.',
+      'Test.asyncError -> error. Args: [Symbol()]. Class instance: Test {"prop1":123}. Res: TestError {"code":"codeTest","message":"messageTest","name":"Error","stack":"stackTest"}.',
     )
   })
 
