@@ -192,4 +192,35 @@ describe('index', () => {
       'Test.asyncError -> error. Args: [Symbol()]. Class instance: Test {"prop1":123}. Res: {"className":"TestError","code":"codeTest","message":"messageTest","name":"Error","stack":"stackTest"}.',
     )
   })
+
+  test('keeps third-party metadata', () => {
+    class TestMeta {
+      @Log()
+      public static static1() {} // tslint:disable-line no-empty
+
+      @Log()
+      public method1() {} // tslint:disable-line no-empty
+    }
+
+    const keyClass = Symbol()
+    Reflect.defineMetadata(keyClass, 42, TestMeta)
+
+    const keyPrototype = Symbol()
+    Reflect.defineMetadata(keyPrototype, 43, TestMeta.prototype)
+
+    const keyProp = Symbol()
+    Reflect.defineMetadata(keyProp, 44, TestMeta.prototype, 'method1')
+
+    const keyStatic = Symbol()
+    Reflect.defineMetadata(keyStatic, 45, TestMeta, 'static1')
+
+    const TestMetaWrapped = LogClass()(TestMeta)
+
+    expect(Reflect.getMetadata(keyClass, TestMeta)).toBe(42)
+    expect(Reflect.getMetadata(keyStatic, TestMeta, 'static1')).toBe(45)
+
+    const instance = new TestMetaWrapped()
+    expect(Reflect.getMetadata(keyPrototype, instance)).toBe(43)
+    expect(Reflect.getMetadata(keyProp, instance, 'method1')).toBe(44)
+  })
 })

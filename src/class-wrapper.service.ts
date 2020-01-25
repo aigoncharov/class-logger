@@ -9,10 +9,10 @@ export class ClassWrapperService {
       // We need get trap for static properties and methods
       get,
     })
-    Reflect.getOwnMetadataKeys(targetWrap).forEach((metadataKey) => {
-      Reflect.defineMetadata(metadataKey, Reflect.getOwnMetadata(metadataKey, targetWrap), proxied)
+    Reflect.getMetadataKeys(targetWrap).forEach((metadataKey) => {
+      Reflect.defineMetadata(metadataKey, Reflect.getMetadata(metadataKey, targetWrap), proxied)
     })
-    return proxied
+    return proxied as T
   }
 
   protected wrapClassInstance(instance: object) {
@@ -27,7 +27,7 @@ export class ClassWrapperService {
     fn: T,
     className: string,
     propertyName: string | symbol,
-    classInstance?: object,
+    classInstance: object,
   ): T {
     const classWrapper = this
     // Use non-arrow function to allow dynamic context
