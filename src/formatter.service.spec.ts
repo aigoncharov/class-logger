@@ -26,6 +26,9 @@ describe(ClassLoggerFormatterService.name, () => {
   const testClassStringExpected = stringify({
     prop1: valTestClassProp1,
     prop2: valTestClassProp2,
+    testService: 'TestService {}',
+    // tslint:disable-next-line object-literal-sort-keys
+    propNull: 'null',
     prop3: valTestClassProp3,
   })
   const dataStart: IClassLoggerFormatterStartData = {
@@ -100,9 +103,9 @@ describe(ClassLoggerFormatterService.name, () => {
   describe('classInstance', () => {
     test('returns stringified classInstance', () => {
       const argsStr = (classLoggerFormatterService as any).classInstance(dataStart)
-      expect(argsStr).toBe(`. Class instance: ${testClassStringExpected}`)
+      expect(argsStr).toBe(`. Class instance: TestClass ${testClassStringExpected}`)
     })
-    test('returns a plceholder', () => {
+    test('returns a placeholder', () => {
       const argsStr = (classLoggerFormatterService as any).classInstance({
         ...dataStart,
         classInstance: undefined,
@@ -146,13 +149,36 @@ describe(ClassLoggerFormatterService.name, () => {
       expect(resStr).toBe(`. Res: [${stringify(resultArr[0])}, ${resultArr[1]}]`)
     })
     test('returns a serialized error result', () => {
-      class TestError extends Error {}
+      class TestError extends Error {
+        public code = 101
+      }
       const result = new TestError()
+      result.stack = 'test'
       const resStr = (classLoggerFormatterService as any).result({
         ...dataEnd,
         result,
       })
-      expect(resStr).toBe(`. Res: ${stringify((classLoggerFormatterService as any).errorFormat(result))}`)
+      expect(resStr).toBe(`. Res: TestError ${stringify({ code: 101, message: '', name: 'Error', stack: 'test' })}`)
+    })
+    test('returns serialized complex object result', () => {
+      class A {
+        // @ts-ignore
+        private test = 42
+      }
+      const resultObj = new A()
+      const resStr = (classLoggerFormatterService as any).result({
+        ...dataEnd,
+        result: resultObj,
+      })
+      expect(resStr).toBe(`. Res: A ${stringify({ test: 42 })}`)
+    })
+    test('returns serialized complex built-in object result', () => {
+      const resultObj = new Map([['test', 42]])
+      const resStr = (classLoggerFormatterService as any).result({
+        ...dataEnd,
+        result: resultObj,
+      })
+      expect(resStr).toBe(`. Res: Map {}`)
     })
   })
 
