@@ -69,7 +69,7 @@ export class ClassLoggerFormatterService implements IClassLoggerFormatter {
     return `. Args: ${this.valueToString(args)}`
   }
   protected classInstance({ classInstance }: IClassLoggerFormatterStartData) {
-    return `. Class instance: ${this.classInstanceToString(classInstance)}`
+    return `. Class instance: ${this.complexObjectToString(classInstance)}`
   }
   protected result({ result }: IClassLoggerFormatterEndData) {
     return `. Res: ${this.valueToString(result)}`
@@ -78,35 +78,50 @@ export class ClassLoggerFormatterService implements IClassLoggerFormatter {
     return '.'
   }
 
-  protected classInstanceToString(classInstance: any) {
-    if (typeof classInstance !== 'object') {
+  protected complexObjectToString(obj: any) {
+    if (typeof obj !== 'object') {
       return this.placeholderNotAvailable
     }
-    const classInsanceFiltered: { [key: string]: any } = {}
-    for (const key of Object.keys(classInstance)) {
-      const value = classInstance[key]
-      if (typeof value === 'function' || (typeof value === 'object' && !this.isPlainObjectOrArray(value))) {
-        continue
-      }
-      classInsanceFiltered[key] = value
+
+    if (obj === null) {
+      return stringify(obj)
     }
-    return stringify(classInsanceFiltered)
+
+    const classInstanceFiltered: { [key: string]: any } = {}
+
+    let keys = Object.keys(obj)
+    if (obj instanceof Map || obj instanceof Set) {
+      keys = [...obj.keys()]
+    }
+
+    keys.forEach((key) => {
+      const value = obj[key]
+      if (typeof value === 'function') {
+        return
+      }
+      classInstanceFiltered[key] =
+        typeof value === 'object' && !this.isPlainObjectOrArray(value) ? this.complexObjectToString(value) : value
+    })
+    return `${obj.constructor.name} ${stringify(classInstanceFiltered)}`
   }
-  protected valueToString(res: any): string {
-    if (res === undefined) {
+  protected valueToString(val: any): string {
+    if (val === undefined) {
       return this.placeholderUndefined
     }
-    if (typeof res !== 'object') {
-      return res.toString()
+    if (typeof val !== 'object') {
+      return val.toString()
     }
-    if (res instanceof Error) {
-      res = this.errorFormat(res)
+    if (val instanceof Error) {
+      val = this.errorFormat(val)
     }
-    if (Array.isArray(res)) {
-      const arrayWithStringifiedElements = res.map(this.valueToString.bind(this))
+    if (!this.isPlainObjectOrArray(val)) {
+      return this.complexObjectToString(val)
+    }
+    if (Array.isArray(val)) {
+      const arrayWithStringifiedElements = val.map(this.valueToString.bind(this))
       return `[${arrayWithStringifiedElements.join(', ')}]`
     }
-    return stringify(res)
+    return stringify(val)
   }
 
   protected includeComplex(

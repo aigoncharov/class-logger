@@ -4,11 +4,15 @@ import { CLASS_LOGGER_METADATA_KEY } from './constants'
 export class ClassWrapperService {
   public wrap<T extends new (...args: any) => any>(targetWrap: T) {
     const get = this.makeProxyTrapGet(targetWrap.name)
-    return new Proxy(targetWrap, {
+    const proxied = new Proxy(targetWrap, {
       construct: this.proxyTrapConstruct,
       // We need get trap for static properties and methods
       get,
     })
+    Reflect.getOwnMetadataKeys(targetWrap).forEach((metadataKey) => {
+      Reflect.defineMetadata(metadataKey, Reflect.getOwnMetadata(metadataKey, targetWrap), proxied)
+    })
+    return proxied
   }
 
   protected wrapClassInstance(instance: object) {
@@ -29,58 +33,58 @@ export class ClassWrapperService {
     // Use non-arrow function to allow dynamic context
     // tslint:disable-next-line only-arrow-functions
     const res = function(this: any, ...args: any[]) {
-      const messageStart = config.formatter.start({
-        args,
-        classInstance,
-        className,
-        include: config.include,
-        propertyName,
-      })
-      config.log(messageStart)
-
-      const logEnd = (result: any, error?: boolean) => {
-        const messageEnd = config.formatter.end({
+        const messageStart = config.formatter.start({
           args,
           classInstance,
           className,
-          error: !!error,
           include: config.include,
           propertyName,
-          result,
         })
-        let logFn = config.log
-        if (error) {
-          logFn = config.logError
-        }
-        logFn(messageEnd)
-      }
+        config.log(messageStart)
 
-      try {
-        let fnRes = fn.apply(this, args)
-        if (classWrapper.isPromise(fnRes)) {
-          fnRes = fnRes
-            .then((result: any) => {
-              logEnd(result)
-              return result
-            })
-            .catch((error: Error) => {
-              logEnd(error, true)
-              throw error
-            })
+        const logEnd = (result: any, error?: boolean) => {
+          const messageEnd = config.formatter.end({
+            args,
+            classInstance,
+            className,
+            error: !!error,
+            include: config.include,
+            propertyName,
+            result,
+          })
+          let logFn = config.log
+          if (error) {
+            logFn = config.logError
+          }
+          logFn(messageEnd)
+        }
+
+        try {
+          let fnRes = fn.apply(this, args)
+          if (classWrapper.isPromise(fnRes)) {
+            fnRes = fnRes
+              .then((result: any) => {
+                logEnd(result)
+                return result
+              })
+              .catch((error: Error) => {
+                logEnd(error, true)
+                throw error
+              })
+            return fnRes
+          }
+          logEnd(fnRes)
           return fnRes
+        } catch (error) {
+          logEnd(error, true)
+          throw error
         }
-        logEnd(fnRes)
-        return fnRes
-      } catch (error) {
-        logEnd(error, true)
-        throw error
-      }
-    } as T
+      } as T
 
-    // Functions are objects as well. They might have own properties.
-    for (const prop of Object.keys(fn) as Array<keyof T>) {
+      // Functions are objects as well. They might have own properties.
+    ;(Object.keys(fn) as Array<keyof T>).forEach((prop) => {
       res[prop] = fn[prop]
-    }
+    })
 
     return res
   }
