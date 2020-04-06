@@ -41,6 +41,8 @@ Logs `Test.method1 -> done. Args: []. Res: 123.` after it.
 - [Formatting](#formatting)
   - [Examples](#examples-1)
     - [Add timestamp (Live demo)](#add-timestamp-live-demo)
+- [FAQ](#faq)
+  - [Proxy performance](#proxy-performance)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -521,3 +523,8 @@ setConfig({
 ```
 
 > FYI, [winston](https://github.com/winstonjs/winston), [pino](https://github.com/pinojs/pino) and pretty much any other logger are capable of adding timestamps on their own, so this example is purely educative. I'd advice to use your logger's built-in mechanism for creating timestamps if possible.
+
+## FAQ
+
+### Proxy performance
+https://github.com/aigoncharov/class-logger/issues/1
